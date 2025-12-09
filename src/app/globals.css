@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f9fafb;
+  --foreground: #111827;
+  --primary: #1B4332;
+  --primary-light: #2D6A4F;
+  --primary-lighter: #40916C;
+  --accent: #52B788;
+  --accent-light: #74C69D;
+  --accent-lighter: #95D5B2;
+  --surface: #B7E4C7;
+  --surface-light: #D8F3DC;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.prose {
+  max-width: 65ch;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.prose a {
+  color: var(--primary-lighter);
+  text-decoration: underline;
+}
+
+.prose a:hover {
+  color: var(--primary);
+}
+
+.prose img {
+  border-radius: 0.75rem;
+}
+
+.prose blockquote {
+  border-left-color: var(--primary);
+  background-color: var(--surface-light);
+  padding: 1rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.tiptap {
+  outline: none;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
