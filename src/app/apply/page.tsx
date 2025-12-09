@@ -35,10 +35,10 @@ export default function ApplyPage() {
     const { error } = await supabase.from('submission_queue').insert({
       name: formData.name,
       email: formData.email,
-      organization: formData.organization || null,
-      linkedin_url: formData.linkedin_url || null,
-      bio: formData.bio || null,
-      reason: formData.reason || null,
+      organization: formData.organization,
+      linkedin_url: formData.linkedin_url,
+      bio: formData.bio,
+      reason: formData.reason,
       status: 'pending',
     } as never)
 
@@ -54,7 +54,7 @@ export default function ApplyPage() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center py-12 px-4">
+      <div className="flex-1 flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-md text-center">
           <div className="w-16 h-16 bg-[#D8F3DC] rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-8 h-8 text-[#1B4332]" />
@@ -126,29 +126,32 @@ export default function ApplyPage() {
                 <Input
                   id="organization"
                   name="organization"
-                  label="Organization"
+                  label="Organization *"
                   value={formData.organization}
                   onChange={handleChange}
                   placeholder="Company or organization"
+                  required
                 />
                 <Input
                   id="linkedin_url"
                   name="linkedin_url"
-                  label="LinkedIn Profile"
+                  label="LinkedIn Profile *"
                   value={formData.linkedin_url}
                   onChange={handleChange}
                   placeholder="https://linkedin.com/in/..."
+                  required
                 />
               </div>
 
               <Textarea
                 id="bio"
                 name="bio"
-                label="Bio"
+                label="Bio *"
                 value={formData.bio}
                 onChange={handleChange}
                 placeholder="Tell us about your HR background and expertise..."
                 rows={4}
+                required
               />
 
               <Textarea

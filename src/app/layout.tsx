@@ -135,8 +135,6 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="apple-touch-icon" href="/media/apple-touch-icon.png" />
         <meta name="theme-color" content="#1B4332" />
         <meta name="geo.region" content="AF" />
         <meta name="geo.placename" content="Africa" />
