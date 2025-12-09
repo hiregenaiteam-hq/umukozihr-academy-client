@@ -96,12 +96,12 @@ export default async function HomePage() {
                 <Link
                   key={category.id}
                   href={category.href}
-                  className="group p-6 rounded-xl border border-gray-100 hover:border-[#40916C] hover:shadow-md transition-all"
+                  className="group p-6 rounded-xl border border-gray-100 hover:border-[#2563eb] hover:shadow-md transition-all"
                 >
-                  <div className="w-12 h-12 bg-[#D8F3DC] rounded-lg flex items-center justify-center mb-4 group-hover:bg-[#B7E4C7] transition-colors">
-                    <Icon className="w-6 h-6 text-[#1B4332]" />
+                  <div className="w-12 h-12 bg-[#ecfdf5] rounded-lg flex items-center justify-center mb-4 group-hover:bg-[#d1fae5] transition-colors">
+                    <Icon className="w-6 h-6 text-[#40916C]" />
                   </div>
-                  <h3 className="font-bold text-gray-900 mb-2 group-hover:text-[#1B4332] transition-colors">
+                  <h3 className="font-bold text-gray-900 mb-2 group-hover:text-[#2563eb] transition-colors">
                     {category.name}
                   </h3>
                   <p className="text-gray-600 text-sm">{category.description}</p>
@@ -131,7 +131,7 @@ export default async function HomePage() {
             <h2 className="text-2xl font-bold text-gray-900">Latest Articles</h2>
             <Link
               href="/category/hr"
-              className="text-[#1B4332] font-medium flex items-center gap-1 hover:gap-2 transition-all"
+              className="text-[#2563eb] font-medium flex items-center gap-1 hover:gap-2 transition-all"
             >
               View all <ArrowRight className="w-4 h-4" />
             </Link>
@@ -160,12 +160,12 @@ export default async function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-[#D8F3DC]">
+      <section className="py-20 bg-[#ecfdf5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-[#1B4332] mb-4">
             Apply to Become a Recognised HR Voice in Africa
           </h2>
-          <p className="text-lg text-[#2D6A4F] mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-[#40916C] mb-8 max-w-2xl mx-auto">
             Share your expertise with thousands of HR professionals and job
             seekers across the continent. Join our community of thought leaders.
           </p>

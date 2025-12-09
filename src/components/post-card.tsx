@@ -25,7 +25,7 @@ export function PostCard({ post, featured = false }: PostCardProps) {
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-[#1B4332] to-[#40916C] flex items-center justify-center">
+                <div className="w-full h-full bg-gradient-to-br from-[#ff6b35] to-[#ffb396] flex items-center justify-center">
                   <span className="text-white text-6xl font-bold opacity-20">U</span>
                 </div>
               )}
@@ -40,7 +40,7 @@ export function PostCard({ post, featured = false }: PostCardProps) {
                   {getReadingTime(post.body)} min read
                 </span>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 group-hover:text-[#1B4332] transition-colors mb-3">
+              <h2 className="text-2xl font-bold text-gray-900 group-hover:text-[#2563eb] transition-colors mb-3">
                 {post.title}
               </h2>
               <p className="text-gray-600 mb-4 line-clamp-3">
@@ -56,8 +56,8 @@ export function PostCard({ post, featured = false }: PostCardProps) {
                     className="rounded-full"
                   />
                 ) : (
-                  <div className="w-10 h-10 bg-[#D8F3DC] rounded-full flex items-center justify-center">
-                    <User className="w-5 h-5 text-[#1B4332]" />
+                  <div className="w-10 h-10 bg-[#ecfdf5] rounded-full flex items-center justify-center">
+                    <User className="w-5 h-5 text-[#40916C]" />
                   </div>
                 )}
                 <div>
@@ -86,7 +86,7 @@ export function PostCard({ post, featured = false }: PostCardProps) {
               className="object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-[#1B4332] to-[#40916C] flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-[#ff6b35] to-[#ffb396] flex items-center justify-center">
               <span className="text-white text-4xl font-bold opacity-20">U</span>
             </div>
           )}
@@ -101,7 +101,7 @@ export function PostCard({ post, featured = false }: PostCardProps) {
               {getReadingTime(post.body)} min
             </span>
           </div>
-          <h3 className="font-bold text-gray-900 group-hover:text-[#1B4332] transition-colors mb-2 line-clamp-2">
+          <h3 className="font-bold text-gray-900 group-hover:text-[#2563eb] transition-colors mb-2 line-clamp-2">
             {post.title}
           </h3>
           <p className="text-sm text-gray-600 mb-4 line-clamp-2 flex-1">
@@ -117,8 +117,8 @@ export function PostCard({ post, featured = false }: PostCardProps) {
                 className="rounded-full"
               />
             ) : (
-              <div className="w-8 h-8 bg-[#D8F3DC] rounded-full flex items-center justify-center">
-                <User className="w-4 h-4 text-[#1B4332]" />
+              <div className="w-8 h-8 bg-[#ecfdf5] rounded-full flex items-center justify-center">
+                <User className="w-4 h-4 text-[#40916C]" />
               </div>
             )}
             <div className="text-sm">

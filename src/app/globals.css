@@ -3,14 +3,30 @@
 :root {
   --background: #f9fafb;
   --foreground: #111827;
-  --primary: #1B4332;
-  --primary-light: #2D6A4F;
-  --primary-lighter: #40916C;
-  --accent: #52B788;
-  --accent-light: #74C69D;
-  --accent-lighter: #95D5B2;
-  --surface: #B7E4C7;
-  --surface-light: #D8F3DC;
+  
+  /* Primary - Orange (Hero color) */
+  --primary: #ff6b35;
+  --primary-dark: #e55a2b;
+  --primary-light: #ff8a5c;
+  --primary-lighter: #ffb396;
+  
+  /* Secondary - Blue (Links & secondary actions) */
+  --secondary: #2563eb;
+  --secondary-dark: #1d4ed8;
+  --secondary-light: #3b82f6;
+  --secondary-lighter: #60a5fa;
+  
+  /* Accent - Green */
+  --accent: #1B4332;
+  --accent-light: #2D6A4F;
+  --accent-lighter: #40916C;
+  --accent-soft: #52B788;
+  
+  /* Surfaces */
+  --surface: #e0f2fe;
+  --surface-light: #f0f9ff;
+  --surface-green: #d1fae5;
+  --surface-green-light: #ecfdf5;
 }
 
 @theme inline {
@@ -33,17 +49,17 @@ body {
 .prose h2,
 .prose h3,
 .prose h4 {
-  color: var(--primary);
+  color: var(--accent);
   font-weight: 700;
 }
 
 .prose a {
-  color: var(--primary-lighter);
+  color: var(--secondary);
   text-decoration: underline;
 }
 
 .prose a:hover {
-  color: var(--primary);
+  color: var(--secondary-dark);
 }
 
 .prose img {
@@ -51,8 +67,8 @@ body {
 }
 
 .prose blockquote {
-  border-left-color: var(--primary);
-  background-color: var(--surface-light);
+  border-left-color: var(--accent);
+  background-color: var(--surface-green-light);
   padding: 1rem;
   border-radius: 0 0.5rem 0.5rem 0;
 }

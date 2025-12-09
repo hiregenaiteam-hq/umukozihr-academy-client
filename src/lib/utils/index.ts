@@ -44,9 +44,9 @@ export function getCategoryLabel(category: string): string {
 
 export function getCategoryColor(category: string): string {
   const colors: Record<string, string> = {
-    hr: 'bg-blue-100 text-blue-800',
-    talent: 'bg-green-100 text-green-800',
-    team: 'bg-purple-100 text-purple-800',
+    hr: 'bg-[#dbeafe] text-[#1d4ed8]',
+    talent: 'bg-[#d1fae5] text-[#047857]',
+    team: 'bg-[#ffedd5] text-[#c2410c]',
   }
   return colors[category] || 'bg-gray-100 text-gray-800'
 }

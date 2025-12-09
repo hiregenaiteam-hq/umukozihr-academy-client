@@ -27,12 +27,12 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-[#1B4332] rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-[#ff6b35] rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">U</span>
               </div>
               <div className="hidden sm:block">
                 <span className="font-bold text-xl text-[#1B4332]">UmukoziHR</span>
-                <span className="text-gray-500 text-sm ml-1">Academy</span>
+                <span className="text-[#2563eb] text-sm ml-1 font-medium">Academy</span>
               </div>
             </Link>
           </div>
@@ -45,8 +45,8 @@ export function Header() {
                 className={cn(
                   'text-sm font-medium transition-colors',
                   pathname === item.href
-                    ? 'text-[#1B4332]'
-                    : 'text-gray-600 hover:text-[#1B4332]'
+                    ? 'text-[#ff6b35]'
+                    : 'text-gray-600 hover:text-[#ff6b35]'
                 )}
               >
                 {item.name}
@@ -59,9 +59,9 @@ export function Header() {
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-[#1B4332] transition-colors"
+                  className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-[#ff6b35] transition-colors"
                 >
-                  <div className="w-8 h-8 bg-[#D8F3DC] rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-[#ecfdf5] rounded-full flex items-center justify-center">
                     {author?.avatar_url ? (
                       <img
                         src={author.avatar_url}
@@ -69,7 +69,7 @@ export function Header() {
                         className="w-8 h-8 rounded-full object-cover"
                       />
                     ) : (
-                      <User className="w-4 h-4 text-[#1B4332]" />
+                      <User className="w-4 h-4 text-[#40916C]" />
                     )}
                   </div>
                   <span>{author?.name || user.email}</span>
@@ -150,7 +150,7 @@ export function Header() {
                 className={cn(
                   'block px-3 py-2 rounded-lg text-base font-medium',
                   pathname === item.href
-                    ? 'bg-[#D8F3DC] text-[#1B4332]'
+                    ? 'bg-[#fff7ed] text-[#ff6b35]'
                     : 'text-gray-600 hover:bg-gray-50'
                 )}
               >
@@ -200,7 +200,7 @@ export function Header() {
                   <Link
                     href="/apply"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block px-3 py-2 rounded-lg text-base font-medium bg-[#1B4332] text-white text-center"
+                    className="block px-3 py-2 rounded-lg text-base font-medium bg-[#ff6b35] text-white text-center"
                   >
                     Become a Contributor
                   </Link>

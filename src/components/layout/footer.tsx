@@ -25,15 +25,15 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                <span className="text-[#1B4332] font-bold text-lg">U</span>
+              <div className="w-10 h-10 bg-[#ff6b35] rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">U</span>
               </div>
               <div>
                 <span className="font-bold text-xl">UmukoziHR</span>
-                <span className="text-[#D8F3DC] text-sm ml-1">Academy</span>
+                <span className="text-[#60a5fa] text-sm ml-1 font-medium">Academy</span>
               </div>
             </div>
-            <p className="text-[#B7E4C7] text-sm">
+            <p className="text-[#9ca3af] text-sm">
               Africa&apos;s HR knowledge commons. Educating talent and empowering recruiters.
             </p>
             <div className="flex gap-4 mt-4">
@@ -41,7 +41,7 @@ export function Footer() {
                 href="https://linkedin.com/company/umukozihr"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#B7E4C7] hover:text-white transition-colors"
+                className="text-[#9ca3af] hover:text-white transition-colors"
               >
                 <Linkedin className="w-5 h-5" />
               </a>
@@ -49,7 +49,7 @@ export function Footer() {
                 href="https://twitter.com/umukozihr"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#B7E4C7] hover:text-white transition-colors"
+                className="text-[#9ca3af] hover:text-white transition-colors"
               >
                 <Twitter className="w-5 h-5" />
               </a>
@@ -63,7 +63,7 @@ export function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-[#B7E4C7] hover:text-white transition-colors text-sm"
+                    className="text-[#9ca3af] hover:text-white transition-colors text-sm"
                   >
                     {link.name}
                   </Link>
@@ -81,7 +81,7 @@ export function Footer() {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#B7E4C7] hover:text-white transition-colors text-sm"
+                    className="text-[#9ca3af] hover:text-white transition-colors text-sm"
                   >
                     {link.name}
                   </a>
@@ -97,7 +97,7 @@ export function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-[#B7E4C7] hover:text-white transition-colors text-sm"
+                    className="text-[#9ca3af] hover:text-white transition-colors text-sm"
                   >
                     {link.name}
                   </Link>
@@ -108,12 +108,12 @@ export function Footer() {
         </div>
 
         <div className="border-t border-[#40916C] mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-[#B7E4C7] text-sm">
+          <p className="text-[#9ca3af] text-sm">
             © {new Date().getFullYear()} UmukoziHR. All rights reserved.
           </p>
           <Link
             href="/apply"
-            className="text-[#D8F3DC] hover:text-white transition-colors text-sm font-medium"
+            className="text-[#60a5fa] hover:text-white transition-colors text-sm font-medium"
           >
             Apply to Become a Recognised HR Voice in Africa →
           </Link>
