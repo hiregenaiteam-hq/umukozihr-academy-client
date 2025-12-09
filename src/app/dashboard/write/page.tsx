@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { TiptapEditor } from '@/components/editor/tiptap-editor'
 import { Button, Input, Select, Card, CardContent, CardHeader } from '@/components/ui'
 import { generateSlug } from '@/lib/utils'
-import { ArrowLeft, Save, Send, Eye, Upload } from 'lucide-react'
+import { ArrowLeft, Save, Send, Eye, Upload, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 
 import type { Post } from '@/types/database'
@@ -27,6 +27,8 @@ function WritePageContent() {
 
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [error, setError] = useState('')
   const [formData, setFormData] = useState({
     title: '',
@@ -96,13 +98,54 @@ function WritePageContent() {
 
   const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (!file) return
+    if (!file || !author) return
+
+    setIsUploadingThumbnail(true)
+    setUploadProgress(0)
+    setError('')
 
     try {
-      const url = await handleImageUpload(file)
-      setFormData((prev) => ({ ...prev, thumbnail_url: url }))
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${author.id}/${Date.now()}.${fileExt}`
+
+      const { data: { session } } = await supabase.auth.getSession()
+      const token = session?.access_token
+
+      const uploadUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/media/${fileName}`
+
+      await new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest()
+
+        xhr.upload.addEventListener('progress', (event) => {
+          if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100)
+            setUploadProgress(percent)
+          }
+        })
+
+        xhr.addEventListener('load', () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            resolve()
+          } else {
+            reject(new Error('Upload failed'))
+          }
+        })
+
+        xhr.addEventListener('error', () => reject(new Error('Upload failed')))
+
+        xhr.open('POST', uploadUrl)
+        xhr.setRequestHeader('Authorization', `Bearer ${token}`)
+        xhr.setRequestHeader('x-upsert', 'true')
+        xhr.send(file)
+      })
+
+      const { data } = supabase.storage.from('media').getPublicUrl(fileName)
+      setFormData((prev) => ({ ...prev, thumbnail_url: data.publicUrl }))
     } catch {
       setError('Failed to upload thumbnail')
+    } finally {
+      setIsUploadingThumbnail(false)
+      setUploadProgress(0)
     }
   }
 
@@ -266,7 +309,18 @@ function WritePageContent() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Thumbnail
                   </label>
-                  {formData.thumbnail_url ? (
+                  {isUploadingThumbnail ? (
+                    <div className="w-full h-32 border-2 border-dashed border-[#40916C] rounded-lg flex flex-col items-center justify-center bg-[#ecfdf5]">
+                      <Loader2 className="w-8 h-8 text-[#40916C] animate-spin mb-2" />
+                      <span className="text-sm text-[#40916C] font-medium">{uploadProgress}%</span>
+                      <div className="w-3/4 h-2 bg-gray-200 rounded-full mt-2 overflow-hidden">
+                        <div
+                          className="h-full bg-[#40916C] transition-all duration-300 ease-out"
+                          style={{ width: `${uploadProgress}%` }}
+                        />
+                      </div>
+                    </div>
+                  ) : formData.thumbnail_url ? (
                     <div className="relative">
                       <img
                         src={formData.thumbnail_url}
