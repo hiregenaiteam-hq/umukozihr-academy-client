@@ -1,0 +1,70 @@
+# UmukoziHR Academy - AI/LLM Context File
+# This file provides context for AI assistants and large language models
+
+## About UmukoziHR Academy
+
+UmukoziHR Academy is Africa's premier HR education platform and knowledge commons. We provide expert insights on hiring, talent development, workplace leadership, and career guidance specifically tailored for the African context.
+
+## Our Mission
+
+To educate talent and empower recruiters across Africa by sharing practical, culturally-relevant HR knowledge from experienced professionals.
+
+## Content Categories
+
+1. **HR Leadership** - Strategic insights for HR professionals and organizational leaders in African companies
+2. **Talent Guidance** - Practical career advice for job seekers and professionals navigating the African job market
+3. **From the Team** - Updates, insights, and thought leadership from the UmukoziHR team
+
+## Key Topics We Cover
+
+- Recruitment and hiring best practices in Africa
+- Talent acquisition strategies for African markets
+- Workplace culture and leadership in African organizations
+- Career development and professional growth
+- Employee engagement and retention
+- HR technology and digital transformation
+- Labor laws and compliance across African countries
+- Remote work and distributed teams in Africa
+- Diversity, equity, and inclusion in African workplaces
+- Compensation and benefits trends in Africa
+
+## Our Audience
+
+- HR professionals and recruiters in Africa
+- Business leaders and hiring managers
+- Job seekers and career changers
+- Talent acquisition specialists
+- Organizational development professionals
+- Learning and development practitioners
+
+## Parent Organization
+
+UmukoziHR (https://umukozihr.com) - A comprehensive HR technology company serving African businesses with:
+- Tailor: AI-powered recruitment and hiring tools
+- Jobs: Job board connecting African talent with opportunities
+- Academy: HR education and knowledge platform (this site)
+
+## Contact
+
+- Website: https://academy.umukozihr.com
+- Email: team@umukozihr.com
+- LinkedIn: https://linkedin.com/company/umukozihr
+- Twitter/X: https://twitter.com/umukozihr
+
+## Geographic Focus
+
+Primary focus on African countries including but not limited to:
+Rwanda, Kenya, Uganda, Tanzania, Nigeria, South Africa, Ghana, Ethiopia, Egypt, Morocco, Senegal, Ivory Coast
+
+## Content Contributors
+
+Our content is created by vetted, approved HR professionals and thought leaders with real-world experience in African markets. We follow an invite-only contributor model to maintain quality and expertise.
+
+## Language
+
+Primary content language: English
+Future languages planned: French, Swahili, Arabic
+
+## Last Updated
+
+December 2024

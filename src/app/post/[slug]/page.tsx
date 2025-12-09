@@ -9,12 +9,15 @@ import { ShareButtons } from '@/components/share-buttons'
 import { AnalyticsTracker } from '@/components/analytics-tracker'
 import { Clock, User, ArrowLeft } from 'lucide-react'
 import type { PostWithAuthor } from '@/types/database'
+import type { Metadata } from 'next'
+
+const siteUrl = 'https://academy.umukozihr.com'
 
 interface PostPageProps {
   params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata({ params }: PostPageProps) {
+export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const { slug } = await params
   const supabase = await createClient()
 
@@ -29,13 +32,48 @@ export async function generateMetadata({ params }: PostPageProps) {
     return { title: 'Post Not Found' }
   }
 
+  const description = post.excerpt || post.body.replace(/<[^>]*>/g, '').slice(0, 160)
+  const imageUrl = post.thumbnail_url || `${siteUrl}/media/og-image.png`
+
   return {
     title: post.title,
-    description: post.excerpt || post.body.replace(/<[^>]*>/g, '').slice(0, 160),
+    description,
+    authors: [{ name: post.authors.name }],
+    keywords: [
+      getCategoryLabel(post.category),
+      'HR Africa',
+      'UmukoziHR',
+      post.authors.name,
+    ],
     openGraph: {
+      type: 'article',
       title: post.title,
-      description: post.excerpt || post.body.replace(/<[^>]*>/g, '').slice(0, 160),
-      images: post.thumbnail_url ? [post.thumbnail_url] : [],
+      description,
+      url: `${siteUrl}/post/${post.slug}`,
+      siteName: 'UmukoziHR Academy',
+      publishedTime: post.published_at || undefined,
+      modifiedTime: post.updated_at,
+      authors: [post.authors.name],
+      section: getCategoryLabel(post.category),
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description,
+      images: [imageUrl],
+      creator: '@umukozihr',
+      site: '@umukozihr',
+    },
+    alternates: {
+      canonical: `${siteUrl}/post/${post.slug}`,
     },
   }
 }
@@ -64,8 +102,47 @@ export default async function PostPage({ params }: PostPageProps) {
     .order('published_at', { ascending: false })
     .limit(3) as { data: PostWithAuthor[] | null }
 
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.excerpt || post.body.replace(/<[^>]*>/g, '').slice(0, 160),
+    image: post.thumbnail_url || `${siteUrl}/media/og-image.png`,
+    datePublished: post.published_at,
+    dateModified: post.updated_at,
+    author: {
+      '@type': 'Person',
+      name: post.authors.name,
+      url: `${siteUrl}/author/${post.authors.id}`,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'UmukoziHR Academy',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${siteUrl}/media/logo.png`,
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${siteUrl}/post/${post.slug}`,
+    },
+    articleSection: getCategoryLabel(post.category),
+    wordCount: post.body.replace(/<[^>]*>/g, '').split(/\s+/).length,
+    inLanguage: 'en',
+    isAccessibleForFree: true,
+    about: {
+      '@type': 'Thing',
+      name: 'Human Resources Management in Africa',
+    },
+  }
+
   return (
     <div className="py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <AnalyticsTracker postId={post.id} postSlug={post.slug} />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link
