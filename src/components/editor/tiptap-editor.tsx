@@ -23,7 +23,7 @@ import {
   Redo,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useEffect, useRef } from 'react'
 
 interface TiptapEditorProps {
   content: string
@@ -40,6 +40,7 @@ export function TiptapEditor({
 }: TiptapEditorProps) {
   const [isAddingLink, setIsAddingLink] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
+  const isInitialContentSet = useRef(false)
 
   const editor = useEditor({
     extensions: [
@@ -64,7 +65,7 @@ export function TiptapEditor({
       }),
       Underline,
     ],
-    content,
+    content: '',
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
     },
@@ -74,6 +75,23 @@ export function TiptapEditor({
       },
     },
   })
+
+  // Sync content from props to editor when content changes
+  useEffect(() => {
+    if (editor && content && !isInitialContentSet.current) {
+      // Only set content if editor is empty or this is the first load
+      const currentContent = editor.getHTML()
+      if (currentContent === '<p></p>' || currentContent === '') {
+        editor.commands.setContent(content, { emitUpdate: false })
+        isInitialContentSet.current = true
+      }
+    }
+  }, [editor, content])
+
+  // Reset the flag when postId changes (new post being edited)
+  useEffect(() => {
+    isInitialContentSet.current = false
+  }, [])
 
   const addImage = useCallback(async () => {
     const input = document.createElement('input')
