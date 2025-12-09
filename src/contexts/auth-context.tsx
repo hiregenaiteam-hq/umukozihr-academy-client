@@ -49,12 +49,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setSession(session)
-      setUser(session?.user ?? null)
+      const { data: { session }, error } = await supabase.auth.getSession()
       
-      if (session?.user) {
-        await fetchAuthor(session.user.id)
+      if (error) {
+        console.error('Session error:', error)
+        setIsLoading(false)
+        return
+      }
+
+      // If we have a session, try to refresh it to ensure it's valid
+      if (session) {
+        const { data: { session: refreshedSession } } = await supabase.auth.refreshSession()
+        if (refreshedSession) {
+          setSession(refreshedSession)
+          setUser(refreshedSession.user)
+          await fetchAuthor(refreshedSession.user.id)
+        } else {
+          setSession(session)
+          setUser(session.user)
+          await fetchAuthor(session.user.id)
+        }
+      } else {
+        setSession(null)
+        setUser(null)
       }
       
       setIsLoading(false)
@@ -64,6 +81,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth event:', event)
+        
         setSession(session)
         setUser(session?.user ?? null)
         
@@ -76,11 +95,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (event === 'SIGNED_OUT') {
           setAuthor(null)
         }
+        
+        // Handle token refresh
+        if (event === 'TOKEN_REFRESHED') {
+          console.log('Token refreshed successfully')
+        }
       }
     )
 
+    // Set up periodic session check every 10 minutes
+    const intervalId = setInterval(async () => {
+      const { data: { session: currentSession } } = await supabase.auth.getSession()
+      if (currentSession) {
+        // Refresh if token will expire in less than 5 minutes
+        const expiresAt = currentSession.expires_at
+        if (expiresAt) {
+          const expiresIn = expiresAt - Math.floor(Date.now() / 1000)
+          if (expiresIn < 300) {
+            await supabase.auth.refreshSession()
+          }
+        }
+      }
+    }, 10 * 60 * 1000) // Check every 10 minutes
+
     return () => {
       subscription.unsubscribe()
+      clearInterval(intervalId)
     }
   }, [supabase, fetchAuthor])
 

@@ -39,7 +39,7 @@ function WritePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const postId = searchParams.get('id')
-  const { author, isEditor } = useAuth()
+  const { author, isEditor, isLoading: authLoading, user } = useAuth()
   const supabase = createClient()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -261,10 +261,35 @@ function WritePageContent() {
     }
   }
 
+  // Redirect to login if not authenticated after loading
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login?redirect=/dashboard/write' + (postId ? `?id=${postId}` : ''))
+    }
+  }, [authLoading, user, router, postId])
+
+  if (authLoading) {
+    return (
+      <div className="py-12 text-center">
+        <Loader2 className="w-8 h-8 text-[#40916C] animate-spin mx-auto mb-2" />
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="py-12 text-center">
+        <p className="text-gray-600">Redirecting to login...</p>
+      </div>
+    )
+  }
+
   if (!author) {
     return (
       <div className="py-12 text-center">
-        <p className="text-gray-600">Loading...</p>
+        <Loader2 className="w-8 h-8 text-[#40916C] animate-spin mx-auto mb-2" />
+        <p className="text-gray-600">Loading author profile...</p>
       </div>
     )
   }
