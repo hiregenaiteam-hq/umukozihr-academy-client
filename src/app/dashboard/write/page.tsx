@@ -1,16 +1,33 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, Suspense, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/contexts/auth-context'
-import { TiptapEditor } from '@/components/editor/tiptap-editor'
 import { Button, Input, Select, Card, CardContent, CardHeader } from '@/components/ui'
 import { generateSlug } from '@/lib/utils'
-import { ArrowLeft, Save, Send, Eye, Upload, Loader2 } from 'lucide-react'
+import { ArrowLeft, Save, Send, Eye, Upload, Loader2, X } from 'lucide-react'
 import Link from 'next/link'
 
 import type { Post } from '@/types/database'
+
+const TiptapEditor = dynamic(
+  () => import('@/components/editor/tiptap-editor').then((mod) => mod.TiptapEditor),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="border border-gray-200 rounded-lg bg-white min-h-[400px] flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 text-[#40916C] animate-spin mx-auto mb-2" />
+          <p className="text-gray-500">Loading editor...</p>
+        </div>
+      </div>
+    ),
+  }
+)
+
+const AUTOSAVE_KEY = 'umukozihr_draft_'
 
 const categoryOptions = [
   { value: 'hr', label: 'HR Leadership' },
@@ -30,6 +47,8 @@ function WritePageContent() {
   const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [error, setError] = useState('')
+  const [lastSaved, setLastSaved] = useState<Date | null>(null)
+  const [showPreview, setShowPreview] = useState(false)
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -39,6 +58,38 @@ function WritePageContent() {
     thumbnail_url: '',
   })
 
+  const storageKey = `${AUTOSAVE_KEY}${postId || 'new'}`
+
+  // Load from localStorage on mount (before DB load)
+  useEffect(() => {
+    const savedDraft = localStorage.getItem(storageKey)
+    if (savedDraft && !postId) {
+      try {
+        const parsed = JSON.parse(savedDraft)
+        setFormData(parsed)
+      } catch {
+        // Invalid JSON, ignore
+      }
+    }
+  }, [storageKey, postId])
+
+  // Auto-save to localStorage with debounce
+  useEffect(() => {
+    if (!formData.title && !formData.body) return
+
+    const timeoutId = setTimeout(() => {
+      localStorage.setItem(storageKey, JSON.stringify(formData))
+      setLastSaved(new Date())
+    }, 1000)
+
+    return () => clearTimeout(timeoutId)
+  }, [formData, storageKey])
+
+  // Clear localStorage after successful save to DB
+  const clearLocalDraft = useCallback(() => {
+    localStorage.removeItem(storageKey)
+  }, [storageKey])
+
   useEffect(() => {
     if (postId) {
       loadPost()
@@ -47,12 +98,15 @@ function WritePageContent() {
 
   const loadPost = async () => {
     if (!postId) return
+    setIsLoading(true)
 
     const { data: post, error } = await supabase
       .from('posts')
       .select('*')
       .eq('id', postId)
       .single() as { data: Post | null; error: unknown }
+
+    setIsLoading(false)
 
     if (error || !post) {
       setError('Failed to load post')
@@ -198,11 +252,12 @@ function WritePageContent() {
     }
 
     setIsSaving(false)
+    clearLocalDraft()
 
     if (status === 'pending' || status === 'published') {
       router.push('/dashboard')
     } else if (!postId && result.data) {
-      router.push(`/dashboard/write?id=${(result.data as { id: string }).id}`)
+      router.replace(`/dashboard/write?id=${(result.data as { id: string }).id}`)
     }
   }
 
@@ -230,23 +285,21 @@ function WritePageContent() {
               variant="outline"
               onClick={() => savePost('draft')}
               isLoading={isSaving}
-              disabled={isLoading}
+              disabled={isLoading || !formData.title}
             >
               <Save className="w-4 h-4 mr-2" />
               Save Draft
             </Button>
-            {formData.slug && (
-              <Link href={`/post/${formData.slug}`} target="_blank">
-                <Button variant="ghost">
-                  <Eye className="w-4 h-4 mr-2" />
-                  Preview
-                </Button>
-              </Link>
+            {(formData.title && formData.body) && (
+              <Button variant="ghost" onClick={() => setShowPreview(true)}>
+                <Eye className="w-4 h-4 mr-2" />
+                Preview
+              </Button>
             )}
             <Button
               onClick={() => savePost(isEditor ? 'published' : 'pending')}
               isLoading={isSaving}
-              disabled={isLoading}
+              disabled={isLoading || !formData.title || !formData.body}
             >
               <Send className="w-4 h-4 mr-2" />
               {isEditor ? 'Publish' : 'Submit for Review'}
@@ -257,6 +310,12 @@ function WritePageContent() {
         {error && (
           <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
             {error}
+          </div>
+        )}
+
+        {lastSaved && (
+          <div className="mb-4 text-xs text-gray-500">
+            Auto-saved locally at {lastSaved.toLocaleTimeString()}
           </div>
         )}
 
@@ -372,6 +431,41 @@ function WritePageContent() {
           </div>
         </div>
       </div>
+
+      {/* Preview Modal */}
+      {showPreview && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h2 className="font-semibold text-lg">Preview</h2>
+              <button
+                onClick={() => setShowPreview(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="overflow-y-auto p-6">
+              <article className="max-w-3xl mx-auto">
+                <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                  {formData.title || 'Untitled Article'}
+                </h1>
+                {formData.thumbnail_url && (
+                  <img
+                    src={formData.thumbnail_url}
+                    alt="Thumbnail"
+                    className="w-full h-64 object-cover rounded-xl mb-6"
+                  />
+                )}
+                <div
+                  className="prose prose-lg max-w-none"
+                  dangerouslySetInnerHTML={{ __html: formData.body || '<p>No content yet...</p>' }}
+                />
+              </article>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
