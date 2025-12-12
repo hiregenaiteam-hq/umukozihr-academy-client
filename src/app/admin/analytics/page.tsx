@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardHeader } from '@/components/ui'
-import { ArrowLeft, TrendingUp, Eye, Share2, MousePointer } from 'lucide-react'
+import { Card, CardContent, CardHeader, Button } from '@/components/ui'
+import { ArrowLeft, TrendingUp, Eye, Share2, MousePointer, Activity } from 'lucide-react'
 import type { Author } from '@/types/database'
 
 export default async function AnalyticsPage() {
@@ -60,41 +60,48 @@ export default async function AnalyticsPage() {
       title: 'Total Views',
       value: totalViews || 0,
       icon: Eye,
-      color: 'bg-blue-100 text-blue-600',
+      gradient: 'from-blue-500 to-blue-400',
     },
     {
       title: 'Scroll Depth (50%+)',
       value: totalScrolls || 0,
       icon: TrendingUp,
-      color: 'bg-green-100 text-green-600',
+      gradient: 'from-[var(--primary)] to-[var(--primary-light)]',
     },
     {
       title: 'Shares',
       value: totalShares || 0,
       icon: Share2,
-      color: 'bg-purple-100 text-purple-600',
+      gradient: 'from-purple-500 to-purple-400',
     },
     {
       title: 'CTA Clicks',
       value: totalCTAs || 0,
       icon: MousePointer,
-      color: 'bg-orange-100 text-orange-600',
+      gradient: 'from-[var(--accent)] to-[var(--accent-light)]',
     },
   ]
 
   return (
-    <div className="py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8 relative">
+      {/* Floating Orbs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="floating-orb w-80 h-80 bg-[var(--primary)] opacity-10 -top-10 -right-10" />
+        <div className="floating-orb w-64 h-64 bg-[var(--accent)] opacity-10 bottom-40 left-10 animation-delay-2000" />
+        <div className="floating-orb w-48 h-48 bg-blue-500 opacity-10 top-1/2 right-1/4 animation-delay-4000" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex items-center gap-4 mb-8">
-          <Link
-            href="/admin"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900"
-          >
-            <ArrowLeft className="w-4 h-4" />
+          <Link href="/admin">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Analytics</h1>
-            <p className="text-gray-600">Track platform performance and engagement</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Analytics</h1>
+            <p className="text-[var(--text-secondary)]">Track platform performance and engagement</p>
           </div>
         </div>
 
@@ -102,15 +109,15 @@ export default async function AnalyticsPage() {
           {stats.map((stat) => {
             const Icon = stat.icon
             return (
-              <Card key={stat.title}>
+              <Card key={stat.title} className="hover:border-[var(--primary)] transition-all hover:-translate-y-1">
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600">{stat.title}</p>
-                      <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                      <p className="text-sm text-[var(--text-secondary)]">{stat.title}</p>
+                      <p className="text-3xl font-bold text-[var(--text-primary)]">{stat.value}</p>
                     </div>
-                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${stat.color}`}>
-                      <Icon className="w-6 h-6" />
+                    <div className={`w-14 h-14 bg-gradient-to-br ${stat.gradient} rounded-xl flex items-center justify-center shadow-lg`}>
+                      <Icon className="w-7 h-7 text-white" />
                     </div>
                   </div>
                 </CardContent>
@@ -120,44 +127,50 @@ export default async function AnalyticsPage() {
         </div>
 
         <Card>
-          <CardHeader>
-            <h2 className="font-semibold">Recent Activity</h2>
+          <CardHeader className="border-b border-[var(--glass-border)]">
+            <h2 className="font-semibold text-[var(--text-primary)] flex items-center gap-2">
+              <Activity className="w-5 h-5 text-[var(--primary)]" />
+              Recent Activity
+            </h2>
           </CardHeader>
           <CardContent className="p-0">
             {recentEvents && recentEvents.length > 0 ? (
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-[var(--glass-border)]">
                 {recentEvents.map((event) => (
                   <div
                     key={event.id}
-                    className="px-6 py-4 flex items-center justify-between"
+                    className="px-6 py-4 flex items-center justify-between hover:bg-white/5 transition-colors"
                   >
-                    <div>
+                    <div className="flex items-center gap-3">
                       <span
-                        className={`px-2 py-1 text-xs rounded-full ${
+                        className={`px-3 py-1 text-xs font-medium rounded-full ${
                           event.event_type === 'post_opened'
-                            ? 'bg-blue-100 text-blue-700'
+                            ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
                             : event.event_type === 'post_scrolled'
-                            ? 'bg-green-100 text-green-700'
+                            ? 'bg-green-500/20 text-green-400 border border-green-500/30'
                             : event.event_type === 'post_shared'
-                            ? 'bg-purple-100 text-purple-700'
-                            : 'bg-orange-100 text-orange-700'
+                            ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                            : 'bg-[var(--accent)]/20 text-[var(--accent)] border border-[var(--accent)]/30'
                         }`}
                       >
                         {event.event_type.replace('_', ' ')}
                       </span>
                       {event.posts && (
-                        <span className="ml-3 text-gray-700">{event.posts.title}</span>
+                        <span className="text-[var(--text-secondary)]">{event.posts.title}</span>
                       )}
                     </div>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-[var(--text-muted)]">
                       {new Date(event.created_at).toLocaleString()}
                     </span>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="py-12 text-center text-gray-500">
-                No analytics data yet. Events will appear here once users start reading articles.
+              <div className="py-16 text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] rounded-2xl flex items-center justify-center mx-auto mb-4 opacity-50">
+                  <Activity className="w-8 h-8 text-white" />
+                </div>
+                <p className="text-[var(--text-muted)]">No analytics data yet. Events will appear here once users start reading articles.</p>
               </div>
             )}
           </CardContent>

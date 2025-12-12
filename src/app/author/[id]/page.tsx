@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { PostCard } from '@/components/post-card'
-import { Linkedin, User } from 'lucide-react'
+import { Linkedin, User, FileText } from 'lucide-react'
 import type { Author, PostWithAuthor } from '@/types/database'
 
 interface AuthorPageProps {
@@ -54,9 +54,15 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
     .order('published_at', { ascending: false }) as { data: PostWithAuthor[] | null }
 
   return (
-    <div className="py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-xl border border-gray-100 p-8 mb-12">
+    <div className="min-h-screen py-12 relative">
+      {/* Floating Orbs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="floating-orb w-96 h-96 bg-[var(--primary)] opacity-10 -top-20 -right-20" />
+        <div className="floating-orb w-64 h-64 bg-[var(--accent)] opacity-10 bottom-40 -left-10 animation-delay-2000" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="glass-card rounded-2xl p-8 mb-12">
           <div className="flex flex-col md:flex-row items-start gap-8">
             {author.avatar_url ? (
               <Image
@@ -64,20 +70,20 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                 alt={author.name}
                 width={120}
                 height={120}
-                className="rounded-full"
+                className="rounded-full ring-4 ring-[var(--primary)]/30"
               />
             ) : (
-              <div className="w-30 h-30 bg-[#D8F3DC] rounded-full flex items-center justify-center">
-                <User className="w-16 h-16 text-[#1B4332]" />
+              <div className="w-30 h-30 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] rounded-full flex items-center justify-center">
+                <User className="w-16 h-16 text-white" />
               </div>
             )}
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{author.name}</h1>
+              <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">{author.name}</h1>
               {author.organization && (
-                <p className="text-lg text-[#40916C] mb-4">{author.organization}</p>
+                <p className="text-lg text-[var(--primary-light)] mb-4">{author.organization}</p>
               )}
               {author.bio && (
-                <p className="text-gray-600 mb-6 max-w-2xl">{author.bio}</p>
+                <p className="text-[var(--text-secondary)] mb-6 max-w-2xl">{author.bio}</p>
               )}
               <div className="flex items-center gap-4">
                 {author.linkedin_url && (
@@ -85,7 +91,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                     href={author.linkedin_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-[#0077b5] hover:underline"
+                    className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
                   >
                     <Linkedin className="w-5 h-5" />
                     LinkedIn Profile
@@ -96,7 +102,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
           </div>
         </div>
 
-        <h2 className="text-2xl font-bold text-gray-900 mb-8">
+        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-8">
           Articles by {author.name}
         </h2>
 
@@ -107,8 +113,11 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
-            <p className="text-gray-600">No articles published yet.</p>
+          <div className="glass-card rounded-2xl text-center py-16">
+            <div className="w-16 h-16 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] rounded-2xl flex items-center justify-center mx-auto mb-4 opacity-50">
+              <FileText className="w-8 h-8 text-white" />
+            </div>
+            <p className="text-[var(--text-muted)]">No articles published yet.</p>
           </div>
         )}
       </div>

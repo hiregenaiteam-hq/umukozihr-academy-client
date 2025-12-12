@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Button, Badge, Card, CardContent } from '@/components/ui'
-import { ArrowLeft, Check, X, Linkedin } from 'lucide-react'
+import { ArrowLeft, Check, X, Linkedin, UserPlus } from 'lucide-react'
 import type { Author, SubmissionQueue } from '@/types/database'
 
 async function approveApplication(formData: FormData) {
@@ -105,62 +105,68 @@ export default async function ApplicationsPage() {
   const reviewedApps = applications?.filter((a) => a.status !== 'pending') || []
 
   return (
-    <div className="py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8 relative">
+      {/* Floating Orbs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="floating-orb w-80 h-80 bg-[var(--primary)] opacity-10 -top-10 -right-10" />
+        <div className="floating-orb w-48 h-48 bg-[var(--accent)] opacity-10 bottom-20 left-10 animation-delay-2000" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex items-center gap-4 mb-8">
-          <Link
-            href="/admin"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900"
-          >
-            <ArrowLeft className="w-4 h-4" />
+          <Link href="/admin">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Contributor Applications</h1>
-            <p className="text-gray-600">Review and approve new contributors</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Contributor Applications</h1>
+            <p className="text-[var(--text-secondary)]">Review and approve new contributors</p>
           </div>
         </div>
 
         <div className="space-y-8">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
               Pending ({pendingApps.length})
             </h2>
             {pendingApps.length > 0 ? (
               <div className="space-y-4">
                 {pendingApps.map((app) => (
-                  <Card key={app.id}>
+                  <Card key={app.id} className="hover:border-[var(--primary)] transition-colors">
                     <CardContent className="pt-6">
                       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <h3 className="font-semibold text-gray-900">{app.name}</h3>
+                            <h3 className="font-semibold text-[var(--text-primary)]">{app.name}</h3>
                             <Badge variant="warning">Pending</Badge>
                           </div>
-                          <p className="text-sm text-gray-600 mb-2">{app.email}</p>
+                          <p className="text-sm text-[var(--text-secondary)] mb-2">{app.email}</p>
                           {app.organization && (
-                            <p className="text-sm text-gray-500 mb-2">{app.organization}</p>
+                            <p className="text-sm text-[var(--text-muted)] mb-2">{app.organization}</p>
                           )}
                           {app.linkedin_url && (
                             <a
                               href={app.linkedin_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-sm text-[#0077b5] hover:underline mb-3"
+                              className="inline-flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300 mb-3 transition-colors"
                             >
                               <Linkedin className="w-4 h-4" />
                               LinkedIn Profile
                             </a>
                           )}
                           {app.bio && (
-                            <p className="text-sm text-gray-700 mb-3">{app.bio}</p>
+                            <p className="text-sm text-[var(--text-secondary)] mb-3">{app.bio}</p>
                           )}
                           {app.reason && (
-                            <div className="bg-gray-50 rounded-lg p-3">
-                              <p className="text-xs text-gray-500 mb-1">Why they want to contribute:</p>
-                              <p className="text-sm text-gray-700">{app.reason}</p>
+                            <div className="glass-card rounded-xl p-4">
+                              <p className="text-xs text-[var(--text-muted)] mb-1">Why they want to contribute:</p>
+                              <p className="text-sm text-[var(--text-secondary)]">{app.reason}</p>
                             </div>
                           )}
-                          <p className="text-xs text-gray-500 mt-3">
+                          <p className="text-xs text-[var(--text-muted)] mt-3">
                             Applied: {new Date(app.created_at).toLocaleDateString()}
                           </p>
                         </div>
@@ -187,15 +193,18 @@ export default async function ApplicationsPage() {
               </div>
             ) : (
               <Card>
-                <CardContent className="py-8 text-center text-gray-500">
-                  No pending applications
+                <CardContent className="py-12 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] rounded-2xl flex items-center justify-center mx-auto mb-4 opacity-50">
+                    <UserPlus className="w-8 h-8 text-white" />
+                  </div>
+                  <p className="text-[var(--text-muted)]">No pending applications</p>
                 </CardContent>
               </Card>
             )}
           </div>
 
           <div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
               Reviewed ({reviewedApps.length})
             </h2>
             {reviewedApps.length > 0 ? (
@@ -206,16 +215,16 @@ export default async function ApplicationsPage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="flex items-center gap-3">
-                            <h3 className="font-semibold text-gray-900">{app.name}</h3>
+                            <h3 className="font-semibold text-[var(--text-primary)]">{app.name}</h3>
                             <Badge
                               variant={app.status === 'approved' ? 'success' : 'danger'}
                             >
                               {app.status}
                             </Badge>
                           </div>
-                          <p className="text-sm text-gray-600">{app.email}</p>
+                          <p className="text-sm text-[var(--text-secondary)]">{app.email}</p>
                         </div>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-[var(--text-muted)]">
                           {app.reviewed_at &&
                             new Date(app.reviewed_at).toLocaleDateString()}
                         </p>
@@ -226,7 +235,7 @@ export default async function ApplicationsPage() {
               </div>
             ) : (
               <Card>
-                <CardContent className="py-8 text-center text-gray-500">
+                <CardContent className="py-8 text-center text-[var(--text-muted)]">
                   No reviewed applications yet
                 </CardContent>
               </Card>

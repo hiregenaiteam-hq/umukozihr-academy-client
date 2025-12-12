@@ -138,16 +138,23 @@ export default async function PostPage({ params }: PostPageProps) {
   }
 
   return (
-    <div className="py-8">
+    <div className="min-h-screen py-8 relative">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
       <AnalyticsTracker postId={post.id} postSlug={post.slug} />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      {/* Floating Orbs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="floating-orb w-96 h-96 bg-[var(--primary)] opacity-10 -top-20 -right-20" />
+        <div className="floating-orb w-64 h-64 bg-[var(--accent)] opacity-10 bottom-40 -left-10 animation-delay-2000" />
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <Link
           href={`/category/${post.category}`}
-          className="inline-flex items-center gap-2 text-[#1B4332] font-medium mb-8 hover:gap-3 transition-all"
+          className="inline-flex items-center gap-2 text-[var(--primary-light)] font-medium mb-8 hover:gap-3 transition-all"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to {getCategoryLabel(post.category)}
@@ -159,13 +166,13 @@ export default async function PostPage({ params }: PostPageProps) {
               <Badge className={getCategoryColor(post.category)}>
                 {getCategoryLabel(post.category)}
               </Badge>
-              <span className="text-sm text-gray-500 flex items-center gap-1">
+              <span className="text-sm text-[var(--text-muted)] flex items-center gap-1">
                 <Clock className="w-4 h-4" />
                 {getReadingTime(post.body)} min read
               </span>
             </div>
 
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+            <h1 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-6">
               {post.title}
             </h1>
 
@@ -180,18 +187,18 @@ export default async function PostPage({ params }: PostPageProps) {
                     alt={post.authors.name}
                     width={48}
                     height={48}
-                    className="rounded-full"
+                    className="rounded-full ring-2 ring-[var(--primary)]/30"
                   />
                 ) : (
-                  <div className="w-12 h-12 bg-[#D8F3DC] rounded-full flex items-center justify-center">
-                    <User className="w-6 h-6 text-[#1B4332]" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] rounded-full flex items-center justify-center">
+                    <User className="w-6 h-6 text-white" />
                   </div>
                 )}
                 <div>
-                  <p className="font-medium text-gray-900 group-hover:text-[#1B4332] transition-colors">
+                  <p className="font-medium text-[var(--text-primary)] group-hover:text-[var(--primary-light)] transition-colors">
                     {post.authors.name}
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-[var(--text-muted)]">
                     {post.published_at && formatDate(post.published_at)}
                   </p>
                 </div>
@@ -205,7 +212,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </header>
 
           {post.thumbnail_url && (
-            <div className="relative h-64 md:h-96 rounded-xl overflow-hidden mb-8">
+            <div className="relative h-64 md:h-96 rounded-2xl overflow-hidden mb-8 ring-1 ring-[var(--glass-border)]">
               <Image
                 src={post.thumbnail_url}
                 alt={post.title}
@@ -217,14 +224,14 @@ export default async function PostPage({ params }: PostPageProps) {
           )}
 
           <div
-            className="prose prose-lg max-w-none mb-12"
+            className="prose prose-lg prose-invert max-w-none mb-12 prose-headings:text-[var(--text-primary)] prose-p:text-[var(--text-secondary)] prose-a:text-[var(--primary-light)] prose-strong:text-[var(--text-primary)]"
             dangerouslySetInnerHTML={{ __html: post.body }}
           />
 
-          <footer className="border-t border-gray-100 pt-8">
+          <footer className="border-t border-[var(--glass-border)] pt-8">
             <Link
               href={`/author/${post.authors.id}`}
-              className="flex items-start gap-4 p-6 bg-[#D8F3DC] rounded-xl"
+              className="flex items-start gap-4 p-6 glass-card rounded-2xl hover:border-[var(--primary)] transition-colors"
             >
               {post.authors.avatar_url ? (
                 <Image
@@ -232,18 +239,18 @@ export default async function PostPage({ params }: PostPageProps) {
                   alt={post.authors.name}
                   width={64}
                   height={64}
-                  className="rounded-full"
+                  className="rounded-full ring-2 ring-[var(--primary)]/30"
                 />
               ) : (
-                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-                  <User className="w-8 h-8 text-[#1B4332]" />
+                <div className="w-16 h-16 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] rounded-full flex items-center justify-center">
+                  <User className="w-8 h-8 text-white" />
                 </div>
               )}
               <div>
-                <p className="text-sm text-[#40916C] font-medium mb-1">Written by</p>
-                <p className="font-bold text-[#1B4332] text-lg">{post.authors.name}</p>
+                <p className="text-sm text-[var(--primary-light)] font-medium mb-1">Written by</p>
+                <p className="font-bold text-[var(--text-primary)] text-lg">{post.authors.name}</p>
                 {post.authors.bio && (
-                  <p className="text-[#2D6A4F] mt-2 text-sm">{post.authors.bio}</p>
+                  <p className="text-[var(--text-secondary)] mt-2 text-sm">{post.authors.bio}</p>
                 )}
               </div>
             </Link>
@@ -252,7 +259,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
         {relatedPosts && relatedPosts.length > 0 && (
           <section className="mt-16">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">Related Articles</h2>
+            <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-8">Related Articles</h2>
             <div className="grid md:grid-cols-3 gap-6">
               {relatedPosts.map((relatedPost) => (
                 <PostCard key={relatedPost.id} post={relatedPost} />

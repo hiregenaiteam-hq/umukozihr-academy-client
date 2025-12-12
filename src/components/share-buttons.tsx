@@ -35,28 +35,28 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-gray-500 mr-2">Share:</span>
+      <span className="text-sm text-[var(--text-muted)] mr-2">Share:</span>
       <button
         onClick={shareOnLinkedIn}
-        className="p-2 text-gray-500 hover:text-[#0077b5] hover:bg-gray-100 rounded-lg transition-colors"
+        className="p-2.5 glass-card rounded-xl text-[var(--text-muted)] hover:text-blue-400 hover:border-blue-400/50 transition-all"
         aria-label="Share on LinkedIn"
       >
         <Linkedin className="w-5 h-5" />
       </button>
       <button
         onClick={shareOnTwitter}
-        className="p-2 text-gray-500 hover:text-[#1da1f2] hover:bg-gray-100 rounded-lg transition-colors"
+        className="p-2.5 glass-card rounded-xl text-[var(--text-muted)] hover:text-sky-400 hover:border-sky-400/50 transition-all"
         aria-label="Share on Twitter"
       >
         <Twitter className="w-5 h-5" />
       </button>
       <button
         onClick={copyLink}
-        className="p-2 text-gray-500 hover:text-[#1B4332] hover:bg-gray-100 rounded-lg transition-colors"
+        className="p-2.5 glass-card rounded-xl text-[var(--text-muted)] hover:text-[var(--primary-light)] hover:border-[var(--primary)]/50 transition-all"
         aria-label="Copy link"
       >
         {copied ? (
-          <Check className="w-5 h-5 text-green-600" />
+          <Check className="w-5 h-5 text-green-400" />
         ) : (
           <Link2 className="w-5 h-5" />
         )}

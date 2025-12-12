@@ -17,10 +17,10 @@ const TiptapEditor = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="border border-gray-200 rounded-lg bg-white min-h-[400px] flex items-center justify-center">
+      <div className="glass-card rounded-xl min-h-[400px] flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 text-[#40916C] animate-spin mx-auto mb-2" />
-          <p className="text-gray-500">Loading editor...</p>
+          <Loader2 className="w-8 h-8 text-[var(--primary)] animate-spin mx-auto mb-2" />
+          <p className="text-[var(--text-muted)]">Loading editor...</p>
         </div>
       </div>
     ),
@@ -60,7 +60,6 @@ function WritePageContent() {
 
   const storageKey = `${AUTOSAVE_KEY}${postId || 'new'}`
 
-  // Load from localStorage on mount (before DB load)
   useEffect(() => {
     const savedDraft = localStorage.getItem(storageKey)
     if (savedDraft && !postId) {
@@ -68,12 +67,10 @@ function WritePageContent() {
         const parsed = JSON.parse(savedDraft)
         setFormData(parsed)
       } catch {
-        // Invalid JSON, ignore
       }
     }
   }, [storageKey, postId])
 
-  // Auto-save to localStorage with debounce
   useEffect(() => {
     if (!formData.title && !formData.body) return
 
@@ -85,7 +82,6 @@ function WritePageContent() {
     return () => clearTimeout(timeoutId)
   }, [formData, storageKey])
 
-  // Clear localStorage after successful save to DB
   const clearLocalDraft = useCallback(() => {
     localStorage.removeItem(storageKey)
   }, [storageKey])
@@ -261,7 +257,6 @@ function WritePageContent() {
     }
   }
 
-  // Redirect to login if not authenticated after loading
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/login?redirect=/dashboard/write' + (postId ? `?id=${postId}` : ''))
@@ -270,37 +265,43 @@ function WritePageContent() {
 
   if (authLoading) {
     return (
-      <div className="py-12 text-center">
-        <Loader2 className="w-8 h-8 text-[#40916C] animate-spin mx-auto mb-2" />
-        <p className="text-gray-600">Loading...</p>
+      <div className="min-h-screen py-12 text-center">
+        <Loader2 className="w-8 h-8 text-[var(--primary)] animate-spin mx-auto mb-2" />
+        <p className="text-[var(--text-secondary)]">Loading...</p>
       </div>
     )
   }
 
   if (!user) {
     return (
-      <div className="py-12 text-center">
-        <p className="text-gray-600">Redirecting to login...</p>
+      <div className="min-h-screen py-12 text-center">
+        <p className="text-[var(--text-secondary)]">Redirecting to login...</p>
       </div>
     )
   }
 
   if (!author) {
     return (
-      <div className="py-12 text-center">
-        <Loader2 className="w-8 h-8 text-[#40916C] animate-spin mx-auto mb-2" />
-        <p className="text-gray-600">Loading author profile...</p>
+      <div className="min-h-screen py-12 text-center">
+        <Loader2 className="w-8 h-8 text-[var(--primary)] animate-spin mx-auto mb-2" />
+        <p className="text-[var(--text-secondary)]">Loading author profile...</p>
       </div>
     )
   }
 
   return (
-    <div className="py-8">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8 relative">
+      {/* Floating Orbs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="floating-orb w-80 h-80 bg-[var(--primary)] opacity-10 -top-10 -right-10" />
+        <div className="floating-orb w-48 h-48 bg-[var(--accent)] opacity-10 bottom-20 left-10 animation-delay-2000" />
+      </div>
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex items-center justify-between mb-8">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900"
+            className="inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
@@ -333,13 +334,13 @@ function WritePageContent() {
         </div>
 
         {error && (
-          <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+          <div className="mb-6 p-4 glass-card rounded-xl border border-red-500/30 text-red-400 text-sm">
             {error}
           </div>
         )}
 
         {lastSaved && (
-          <div className="mb-4 text-xs text-gray-500">
+          <div className="mb-4 text-xs text-[var(--text-muted)]">
             Auto-saved locally at {lastSaved.toLocaleTimeString()}
           </div>
         )}
@@ -350,7 +351,7 @@ function WritePageContent() {
               value={formData.title}
               onChange={handleTitleChange}
               placeholder="Article title..."
-              className="text-2xl font-bold border-0 border-b rounded-none px-0 focus:ring-0"
+              className="text-2xl font-bold border-0 border-b border-[var(--glass-border)] rounded-none px-0 bg-transparent focus:ring-0"
             />
 
             <TiptapEditor
@@ -363,7 +364,7 @@ function WritePageContent() {
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <h3 className="font-semibold">Post Settings</h3>
+                <h3 className="font-semibold text-[var(--text-primary)]">Post Settings</h3>
               </CardHeader>
               <CardContent className="space-y-4">
                 <Input
@@ -390,16 +391,16 @@ function WritePageContent() {
                 />
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Thumbnail
                   </label>
                   {isUploadingThumbnail ? (
-                    <div className="w-full h-32 border-2 border-dashed border-[#40916C] rounded-lg flex flex-col items-center justify-center bg-[#ecfdf5]">
-                      <Loader2 className="w-8 h-8 text-[#40916C] animate-spin mb-2" />
-                      <span className="text-sm text-[#40916C] font-medium">{uploadProgress}%</span>
-                      <div className="w-3/4 h-2 bg-gray-200 rounded-full mt-2 overflow-hidden">
+                    <div className="w-full h-32 glass-card rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-[var(--primary)]">
+                      <Loader2 className="w-8 h-8 text-[var(--primary)] animate-spin mb-2" />
+                      <span className="text-sm text-[var(--primary)] font-medium">{uploadProgress}%</span>
+                      <div className="w-3/4 h-2 bg-[var(--glass-bg)] rounded-full mt-2 overflow-hidden">
                         <div
-                          className="h-full bg-[#40916C] transition-all duration-300 ease-out"
+                          className="h-full bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)] transition-all duration-300 ease-out"
                           style={{ width: `${uploadProgress}%` }}
                         />
                       </div>
@@ -409,22 +410,22 @@ function WritePageContent() {
                       <img
                         src={formData.thumbnail_url}
                         alt="Thumbnail"
-                        className="w-full h-40 object-cover rounded-lg"
+                        className="w-full h-40 object-cover rounded-xl ring-1 ring-[var(--glass-border)]"
                       />
                       <button
                         type="button"
                         onClick={() =>
                           setFormData((prev) => ({ ...prev, thumbnail_url: '' }))
                         }
-                        className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded"
+                        className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
                       >
-                        ×
+                        <X className="w-4 h-4" />
                       </button>
                     </div>
                   ) : (
-                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-[#40916C] transition-colors">
-                      <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-500">Upload thumbnail</span>
+                    <label className="flex flex-col items-center justify-center w-full h-32 glass-card rounded-xl cursor-pointer hover:border-[var(--primary)] transition-colors border-2 border-dashed border-[var(--glass-border)]">
+                      <Upload className="w-8 h-8 text-[var(--text-muted)] mb-2" />
+                      <span className="text-sm text-[var(--text-muted)]">Upload thumbnail</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -439,7 +440,7 @@ function WritePageContent() {
 
             <Card>
               <CardHeader>
-                <h3 className="font-semibold">Excerpt</h3>
+                <h3 className="font-semibold text-[var(--text-primary)]">Excerpt</h3>
               </CardHeader>
               <CardContent>
                 <textarea
@@ -449,7 +450,7 @@ function WritePageContent() {
                   }
                   placeholder="Brief description of your article..."
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B4332] focus:border-transparent"
+                  className="w-full px-4 py-3 glass-card rounded-xl text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent resize-none"
                 />
               </CardContent>
             </Card>
@@ -457,33 +458,32 @@ function WritePageContent() {
         </div>
       </div>
 
-      {/* Preview Modal */}
       {showPreview && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b">
-              <h2 className="font-semibold text-lg">Preview</h2>
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="glass-card rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-[var(--glass-border)]">
+              <h2 className="font-semibold text-lg text-[var(--text-primary)]">Preview</h2>
               <button
                 onClick={() => setShowPreview(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
+                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-[var(--text-secondary)]" />
               </button>
             </div>
             <div className="overflow-y-auto p-6">
               <article className="max-w-3xl mx-auto">
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
                   {formData.title || 'Untitled Article'}
                 </h1>
                 {formData.thumbnail_url && (
                   <img
                     src={formData.thumbnail_url}
                     alt="Thumbnail"
-                    className="w-full h-64 object-cover rounded-xl mb-6"
+                    className="w-full h-64 object-cover rounded-xl mb-6 ring-1 ring-[var(--glass-border)]"
                   />
                 )}
                 <div
-                  className="prose prose-lg max-w-none"
+                  className="prose prose-lg prose-invert max-w-none prose-headings:text-[var(--text-primary)] prose-p:text-[var(--text-secondary)]"
                   dangerouslySetInnerHTML={{ __html: formData.body || '<p>No content yet...</p>' }}
                 />
               </article>
@@ -497,7 +497,7 @@ function WritePageContent() {
 
 export default function WritePage() {
   return (
-    <Suspense fallback={<div className="py-12 text-center"><p className="text-gray-600">Loading...</p></div>}>
+    <Suspense fallback={<div className="min-h-screen py-12 text-center"><p className="text-[var(--text-secondary)]">Loading...</p></div>}>
       <WritePageContent />
     </Suspense>
   )
