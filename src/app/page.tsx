@@ -39,7 +39,7 @@ export default async function HomePage() {
     .eq('featured', true)
     .order('published_at', { ascending: false })
     .limit(1)
-    .single() as { data: PostWithAuthor | null }
+    .maybeSingle() as { data: PostWithAuthor | null }
 
   const { data: recentPosts } = await supabase
     .from('posts')
