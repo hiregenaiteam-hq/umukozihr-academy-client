@@ -1,9 +1,10 @@
 ﻿'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { Menu, X, ChevronDown, User, LogOut, Settings, PenSquare, BookOpen } from 'lucide-react'
+import { Menu, X, ChevronDown, User, LogOut, Settings, PenSquare } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui'
 import { cn } from '@/lib/utils'
@@ -28,12 +29,18 @@ export function Header() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-[var(--accent)] to-[var(--accent-light)] rounded-xl flex items-center justify-center shadow-lg shadow-[var(--accent-glow)] group-hover:shadow-[0_0_30px_var(--accent-glow)] transition-shadow">
-                <BookOpen className="w-5 h-5 text-white" />
+              <div className="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow overflow-hidden">
+                <Image
+                  src="/media/logo.png"
+                  alt="UmukoziHR"
+                  width={36}
+                  height={36}
+                  className="object-contain"
+                />
               </div>
-              <div className="hidden sm:block">
-                <span className="font-bold text-xl text-[var(--text-primary)]">UmukoziHR</span>
-                <span className="text-[var(--secondary-light)] text-sm ml-1.5 font-medium">Academy</span>
+              <div className="hidden sm:flex flex-col leading-tight">
+                <span className="font-bold text-xl text-[var(--text-primary)] tracking-tight">UmukoziHR</span>
+                <span className="text-[#3B82F6] text-xs font-semibold tracking-wide">Academy</span>
               </div>
             </Link>
           </div>

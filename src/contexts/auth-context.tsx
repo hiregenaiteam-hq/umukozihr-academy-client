@@ -1,8 +1,8 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { User, Session } from '@supabase/supabase-js'
+import type { User, Session, SupabaseClient } from '@supabase/supabase-js'
 import type { Author, Database } from '@/types/database'
 
 type AuthorInsert = Database['public']['Tables']['authors']['Insert']
@@ -23,15 +23,25 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+function getSupabaseClient(): SupabaseClient<Database> | null {
+  try {
+    return createClient()
+  } catch {
+    // During build time, env vars may not be available
+    return null
+  }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [author, setAuthor] = useState<Author | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  const supabase = createClient()
+  const supabase = useMemo(() => getSupabaseClient(), [])
 
   const fetchAuthor = useCallback(async (userId: string) => {
+    if (!supabase) return
     const { data } = await supabase
       .from('authors')
       .select('*')
@@ -48,6 +58,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user?.id, fetchAuthor])
 
   useEffect(() => {
+    if (!supabase) {
+      setIsLoading(false)
+      return
+    }
+
     const getSession = async () => {
       const { data: { session }, error } = await supabase.auth.getSession()
       
@@ -125,6 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [supabase, fetchAuthor])
 
   const signIn = async (email: string, password: string) => {
+    if (!supabase) return { error: new Error('Supabase client not available') }
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -133,6 +149,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signUp = async (email: string, password: string, name: string) => {
+    if (!supabase) return { error: new Error('Supabase client not available') }
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -160,6 +177,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signOut = async () => {
+    if (!supabase) return
     await supabase.auth.signOut()
     setUser(null)
     setAuthor(null)
