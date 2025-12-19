@@ -39,7 +39,10 @@ export function Header() {
                 />
               </div>
               <div className="hidden sm:flex flex-col leading-tight">
-                <span className="font-bold text-xl text-[var(--text-primary)] tracking-tight">UmukoziHR</span>
+                <span className="font-bold text-xl tracking-tight">
+                                  <span className="text-[var(--text-primary)]">Umukozi</span>
+                                  <span className="text-[#F97316]">HR</span>
+                                </span>
                 <span className="text-[#3B82F6] text-xs font-semibold tracking-wide">Academy</span>
               </div>
             </Link>
